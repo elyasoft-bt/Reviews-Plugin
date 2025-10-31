@@ -1,0 +1,406 @@
+/**
+ * Reviews Plugin Styles
+ * TrustIndex Benzeri Modern Tasarım
+ * 
+ * @package Reviews_Plugin
+ */
+
+/* ============================================
+   Genel Stil
+   ============================================ */
+.reviews-plugin-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   Header ve Summary
+   ============================================ */
+.reviews-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.reviews-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.reviews-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reviews-logo svg {
+    flex-shrink: 0;
+}
+
+.reviews-business-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #202124;
+}
+
+.reviews-rating-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.reviews-rating-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #202124;
+    line-height: 1;
+}
+
+.reviews-total-count {
+    font-size: 14px;
+    color: #5f6368;
+    margin-left: 8px;
+}
+
+/* ============================================
+   Yıldız Derecelendirme
+   ============================================ */
+.reviews-stars {
+    display: flex;
+    gap: 2px;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.star {
+    color: #fbbc04;
+}
+
+.star-full {
+    color: #fbbc04;
+}
+
+.star-half {
+    background: linear-gradient(90deg, #fbbc04 50%, #e8eaed 50%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.star-empty {
+    color: #e8eaed;
+}
+
+/* ============================================
+   Yorum Kartları
+   ============================================ */
+.review-card {
+    background: #ffffff;
+    border: 1px solid #e8eaed;
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.review-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.review-header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.review-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.review-author-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.review-author-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #202124;
+    margin: 0 0 6px 0;
+}
+
+.review-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.review-meta .reviews-stars {
+    font-size: 16px;
+}
+
+.review-date {
+    font-size: 13px;
+    color: #5f6368;
+}
+
+.review-content {
+    flex: 1;
+    margin-bottom: 16px;
+}
+
+.review-content p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #3c4043;
+    margin: 0;
+    word-wrap: break-word;
+}
+
+.review-footer {
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.review-source {
+    font-size: 12px;
+    color: #5f6368;
+    font-style: italic;
+}
+
+/* ============================================
+   Slider Görünümü
+   ============================================ */
+.reviews-slider-wrapper .reviews-swiper {
+    padding: 20px 50px;
+    margin: 0 -50px;
+}
+
+.reviews-swiper .swiper-slide {
+    height: auto;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #4285f4;
+    background: #ffffff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.swiper-pagination-bullet {
+    background: #4285f4;
+    opacity: 0.3;
+}
+
+.swiper-pagination-bullet-active {
+    opacity: 1;
+}
+
+/* ============================================
+   Grid Görünümü
+   ============================================ */
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin: 20px 0;
+}
+
+/* ============================================
+   List Görünümü
+   ============================================ */
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.reviews-list .review-card {
+    max-width: 100%;
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.reviews-powered {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.reviews-powered span {
+    font-size: 12px;
+    color: #5f6368;
+    font-weight: 500;
+}
+
+/* ============================================
+   Hata ve Boş Durum Mesajları
+   ============================================ */
+.reviews-error,
+.reviews-empty {
+    text-align: center;
+    padding: 40px 20px;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    color: #856404;
+    font-size: 14px;
+}
+
+.reviews-empty {
+    background: #e8f4fd;
+    border-color: #4285f4;
+    color: #1967d2;
+}
+
+/* ============================================
+   Responsive Tasarım
+   ============================================ */
+@media (max-width: 768px) {
+    .reviews-plugin-wrapper {
+        padding: 16px;
+    }
+    
+    .reviews-summary {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .reviews-business-name {
+        font-size: 18px;
+    }
+    
+    .reviews-rating-number {
+        font-size: 28px;
+    }
+    
+    .reviews-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .review-card {
+        padding: 16px;
+    }
+    
+    .reviews-slider-wrapper .reviews-swiper {
+        padding: 20px 40px;
+        margin: 0 -40px;
+    }
+    
+    .swiper-button-next,
+    .swiper-button-prev {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .swiper-button-next:after,
+    .swiper-button-prev:after {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .reviews-slider-wrapper .reviews-swiper {
+        padding: 20px 5px;
+        margin: 0 -5px;
+    }
+    
+    .swiper-button-next,
+    .swiper-button-prev {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .swiper-button-next {
+        right: 5px;
+    }
+    
+    .swiper-button-prev {
+        left: 5px;
+    }
+}
+
+/* ============================================
+   Animasyonlar
+   ============================================ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.review-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ============================================
+   Dark Mode Desteği (Opsiyonel)
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+    .reviews-plugin-wrapper {
+        background: #202124;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .reviews-business-name,
+    .review-author-name {
+        color: #e8eaed;
+    }
+    
+    .review-content p {
+        color: #bdc1c6;
+    }
+    
+    .review-card {
+        background: #292a2d;
+        border-color: #3c4043;
+    }
+    
+    .reviews-header {
+        border-bottom-color: #3c4043;
+    }
+    
+    .review-footer {
+        border-top-color: #3c4043;
+    }
+    
+    .swiper-button-next,
+    .swiper-button-prev {
+        background: #292a2d;
+    }
+}

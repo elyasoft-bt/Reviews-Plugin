@@ -56,6 +56,9 @@ class Reviews_Shortcode {
         // Get template based on style
         ob_start();
         
+        // Output Schema.org markup
+        $this->output_schema_markup($reviews, $data);
+        
         switch ($atts['style']) {
             case 'grid':
                 $this->render_grid_view($reviews, $data);
@@ -70,6 +73,73 @@ class Reviews_Shortcode {
         }
         
         return ob_get_clean();
+    }
+    
+    /**
+     * Output Schema.org JSON-LD markup for rich snippets
+     * 
+     * @param array $reviews
+     * @param array $data
+     */
+    private function output_schema_markup($reviews, $data) {
+        $business_name = get_option('reviews_plugin_business_name', '');
+        $business_type = get_option('reviews_plugin_business_type', 'LocalBusiness');
+        
+        // Don't output schema if business name is not set
+        if (empty($business_name)) {
+            return;
+        }
+        
+        // Calculate aggregate rating
+        $total_rating = 0;
+        $review_count = count($reviews);
+        
+        foreach ($reviews as $review) {
+            $total_rating += floatval($review['rating']);
+        }
+        
+        $average_rating = $review_count > 0 ? round($total_rating / $review_count, 1) : 0;
+        
+        // Build schema data
+        $schema = array(
+            '@context' => 'https://schema.org',
+            '@type' => $business_type,
+            'name' => $business_name,
+            'aggregateRating' => array(
+                '@type' => 'AggregateRating',
+                'ratingValue' => $average_rating,
+                'reviewCount' => $review_count,
+                'bestRating' => '5',
+                'worstRating' => '1'
+            ),
+            'review' => array()
+        );
+        
+        // Add individual reviews to schema
+        foreach ($reviews as $review) {
+            $review_schema = array(
+                '@type' => 'Review',
+                'author' => array(
+                    '@type' => 'Person',
+                    'name' => isset($review['author_name']) ? $review['author_name'] : 'Anonymous'
+                ),
+                'reviewRating' => array(
+                    '@type' => 'Rating',
+                    'ratingValue' => $review['rating'],
+                    'bestRating' => '5',
+                    'worstRating' => '1'
+                ),
+                'datePublished' => date('Y-m-d', $review['time']),
+                'reviewBody' => isset($review['text']) ? wp_trim_words($review['text'], 50) : ''
+            );
+            
+            $schema['review'][] = $review_schema;
+        }
+        
+        // Output JSON-LD
+        echo '<script type="application/ld+json">' . "\n";
+        echo wp_json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        echo "\n" . '</script>' . "\n";
     }
     
     /**

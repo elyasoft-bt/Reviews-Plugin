@@ -15,6 +15,21 @@ class Reviews_Admin {
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'register_settings'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
+    }
+    
+    /**
+     * Enqueue admin assets
+     */
+    public function enqueue_admin_assets($hook) {
+        if ('toplevel_page_reviews-plugin-settings' !== $hook) {
+            return;
+        }
+        
+        // Add CodeMirror for CSS editor
+        wp_enqueue_code_editor(array('type' => 'text/css'));
+        wp_enqueue_script('wp-theme-plugin-editor');
+        wp_enqueue_style('wp-codemirror');
     }
     
     /**
@@ -36,12 +51,23 @@ class Reviews_Admin {
      * Register settings
      */
     public function register_settings() {
+        // API Settings
         register_setting('reviews_plugin_settings', 'reviews_plugin_api_key');
         register_setting('reviews_plugin_settings', 'reviews_plugin_place_id');
         register_setting('reviews_plugin_settings', 'reviews_plugin_cache_duration');
         register_setting('reviews_plugin_settings', 'reviews_plugin_max_reviews');
         register_setting('reviews_plugin_settings', 'reviews_plugin_min_rating');
         
+        // Schema Settings
+        register_setting('reviews_plugin_settings', 'reviews_plugin_business_name');
+        register_setting('reviews_plugin_settings', 'reviews_plugin_business_type');
+        
+        // Custom CSS
+        register_setting('reviews_plugin_settings', 'reviews_plugin_custom_css', array(
+            'sanitize_callback' => 'wp_strip_all_tags'
+        ));
+        
+        // API Settings Section
         add_settings_section(
             'reviews_plugin_main_section',
             __('Google API Ayarları', 'reviews-plugin'),
@@ -88,10 +114,58 @@ class Reviews_Admin {
             'reviews-plugin-settings',
             'reviews_plugin_main_section'
         );
+        
+        // Schema Settings Section
+        add_settings_section(
+            'reviews_plugin_schema_section',
+            __('Google Schema Ayarları (SEO)', 'reviews-plugin'),
+            array($this, 'schema_section_callback'),
+            'reviews-plugin-settings'
+        );
+        
+        add_settings_field(
+            'reviews_plugin_business_name',
+            __('İşletme Adı', 'reviews-plugin'),
+            array($this, 'business_name_callback'),
+            'reviews-plugin-settings',
+            'reviews_plugin_schema_section'
+        );
+        
+        add_settings_field(
+            'reviews_plugin_business_type',
+            __('İşletme Tipi', 'reviews-plugin'),
+            array($this, 'business_type_callback'),
+            'reviews-plugin-settings',
+            'reviews_plugin_schema_section'
+        );
+        
+        // Custom CSS Section
+        add_settings_section(
+            'reviews_plugin_css_section',
+            __('Özel CSS', 'reviews-plugin'),
+            array($this, 'css_section_callback'),
+            'reviews-plugin-settings'
+        );
+        
+        add_settings_field(
+            'reviews_plugin_custom_css',
+            __('CSS Kodu', 'reviews-plugin'),
+            array($this, 'custom_css_callback'),
+            'reviews-plugin-settings',
+            'reviews_plugin_css_section'
+        );
     }
     
     public function section_callback() {
         echo '<p>' . __('Google Places API ayarlarınızı buradan yapılandırın.', 'reviews-plugin') . '</p>';
+    }
+    
+    public function schema_section_callback() {
+        echo '<p>' . __('Google arama sonuçlarında yıldızların görünmesi için işletme bilgilerinizi girin. Bu bilgiler Schema.org formatında yapılandırılmış veri olarak eklenir.', 'reviews-plugin') . '</p>';
+    }
+    
+    public function css_section_callback() {
+        echo '<p>' . __('Yorumların görünümünü özelleştirmek için kendi CSS kodunuzu buraya ekleyin.', 'reviews-plugin') . '</p>';
     }
     
     public function api_key_callback() {
@@ -126,6 +200,62 @@ class Reviews_Admin {
         }
         echo '</select>';
         echo '<p class="description">' . __('Gösterilecek minimum yıldız sayısı.', 'reviews-plugin') . '</p>';
+    }
+    
+    public function business_name_callback() {
+        $value = get_option('reviews_plugin_business_name', '');
+        echo '<input type="text" name="reviews_plugin_business_name" value="' . esc_attr($value) . '" class="regular-text" />';
+        echo '<p class="description">' . __('İşletmenizin adı (örn: Elyasoft Teknoloji). Google arama sonuçlarında görünecektir.', 'reviews-plugin') . '</p>';
+    }
+    
+    public function business_type_callback() {
+        $value = get_option('reviews_plugin_business_type', 'LocalBusiness');
+        $types = array(
+            'LocalBusiness' => __('Yerel İşletme', 'reviews-plugin'),
+            'Restaurant' => __('Restoran', 'reviews-plugin'),
+            'Store' => __('Mağaza', 'reviews-plugin'),
+            'Hotel' => __('Otel', 'reviews-plugin'),
+            'AutoDealer' => __('Oto Galeri', 'reviews-plugin'),
+            'BeautySalon' => __('Güzellik Salonu', 'reviews-plugin'),
+            'Dentist' => __('Diş Kliniği', 'reviews-plugin'),
+            'Doctor' => __('Doktor', 'reviews-plugin'),
+            'LegalService' => __('Hukuk Bürosu', 'reviews-plugin'),
+            'RealEstateAgent' => __('Emlakçı', 'reviews-plugin'),
+            'HealthClub' => __('Spor Salonu', 'reviews-plugin'),
+            'ProfessionalService' => __('Profesyonel Hizmet', 'reviews-plugin'),
+        );
+        
+        echo '<select name="reviews_plugin_business_type" class="regular-text">';
+        foreach ($types as $type_key => $type_label) {
+            echo '<option value="' . esc_attr($type_key) . '" ' . selected($value, $type_key, false) . '>' . esc_html($type_label) . '</option>';
+        }
+        echo '</select>';
+        echo '<p class="description">' . __('İşletmenizin türünü seçin. Bu bilgi Google\'a gönderilir.', 'reviews-plugin') . '</p>';
+    }
+    
+    public function custom_css_callback() {
+        $value = get_option('reviews_plugin_custom_css', '');
+        echo '<textarea id="reviews_plugin_custom_css" name="reviews_plugin_custom_css" rows="15" class="large-text code">' . esc_textarea($value) . '</textarea>';
+        echo '<p class="description">' . __('Özel CSS kodunuzu buraya yazın. Örnek: .review-card { border-radius: 15px; }', 'reviews-plugin') . '</p>';
+        
+        // Initialize CodeMirror
+        ?>
+        <script>
+        jQuery(document).ready(function($) {
+            if (typeof wp !== 'undefined' && wp.codeEditor) {
+                wp.codeEditor.initialize($('#reviews_plugin_custom_css'), {
+                    codemirror: {
+                        mode: 'css',
+                        lineNumbers: true,
+                        lineWrapping: true,
+                        styleActiveLine: true,
+                        continueComments: true
+                    }
+                });
+            }
+        });
+        </script>
+        <?php
     }
     
     /**

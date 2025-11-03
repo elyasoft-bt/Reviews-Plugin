@@ -3,7 +3,7 @@
  * Plugin Name: Reviews Plugin
  * Plugin URI: https://github.com/elyasoft-bt/Reviews-Plugin
  * Description: Google Business yorumlarını WordPress sitenize entegre edin. TrustIndex benzeri modern görünüm.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Elyasoft
  * Author URI: https://github.com/elyasoft-bt
  * License: GPL v2 or later
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('REVIEWS_PLUGIN_VERSION', '1.0.0');
+define('REVIEWS_PLUGIN_VERSION', '1.1.0');
 define('REVIEWS_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('REVIEWS_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -48,6 +48,11 @@ function reviews_plugin_activate() {
     add_option('reviews_plugin_cache_duration', '24');
     add_option('reviews_plugin_max_reviews', '10');
     add_option('reviews_plugin_min_rating', '1');
+    
+    // New options for Schema and Custom CSS
+    add_option('reviews_plugin_business_name', '');
+    add_option('reviews_plugin_business_type', 'LocalBusiness');
+    add_option('reviews_plugin_custom_css', '');
 }
 
 // Deactivation hook
@@ -66,4 +71,16 @@ function reviews_plugin_enqueue_assets() {
     // Enqueue Swiper for slider
     wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', array(), '11.0.0');
     wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', array(), '11.0.0', true);
+}
+
+// Enqueue custom CSS
+add_action('wp_head', 'reviews_plugin_custom_css', 100);
+function reviews_plugin_custom_css() {
+    $custom_css = get_option('reviews_plugin_custom_css', '');
+    
+    if (!empty($custom_css)) {
+        echo '<style id="reviews-plugin-custom-css">' . "\n";
+        echo wp_strip_all_tags($custom_css) . "\n";
+        echo '</style>' . "\n";
+    }
 }
